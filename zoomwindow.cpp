@@ -84,11 +84,12 @@ void ZoomWindow::setupUI()
 // 繪製事件：顯示放大影像和繪圖圖層
 void ZoomWindow::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);  // 標記未使用的參數
     QPainter painter(this);
     
     // 計算影像顯示位置（置中）
     int xOffset = (width() - zoomedImage.width()) / 2;
-    int yOffset = 60; // 工具列下方
+    int yOffset = TOOLBAR_HEIGHT; // 工具列下方
     
     // 繪製放大的影像
     painter.drawImage(xOffset, yOffset, zoomedImage);
@@ -102,7 +103,7 @@ void ZoomWindow::mousePressEvent(QMouseEvent *event)
 {
     // 計算影像顯示位置
     int xOffset = (width() - zoomedImage.width()) / 2;
-    int yOffset = 60;
+    int yOffset = TOOLBAR_HEIGHT;
     
     // 檢查是否在影像範圍內
     QPoint imagePos = event->pos() - QPoint(xOffset, yOffset);
@@ -123,7 +124,7 @@ void ZoomWindow::mouseMoveEvent(QMouseEvent *event)
     
     // 計算影像顯示位置
     int xOffset = (width() - zoomedImage.width()) / 2;
-    int yOffset = 60;
+    int yOffset = TOOLBAR_HEIGHT;
     
     QPoint imagePos = event->pos() - QPoint(xOffset, yOffset);
     
@@ -146,6 +147,7 @@ void ZoomWindow::mouseMoveEvent(QMouseEvent *event)
 // 滑鼠釋放事件：結束繪圖
 void ZoomWindow::mouseReleaseEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);  // 標記未使用的參數
     if (isDrawing)
     {
         isDrawing = false;

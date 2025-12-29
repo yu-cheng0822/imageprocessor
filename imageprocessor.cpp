@@ -285,6 +285,7 @@ void imageprocessor::mouseReleaseEvent (QMouseEvent *event)
                     
                     // 建立並顯示放大視窗
                     ZoomWindow *zoomWin = new ZoomWindow(img, imageRect, zoomFactor);
+                    zoomWin->setAttribute(Qt::WA_DeleteOnClose); // 關閉視窗時自動釋放記憶體
                     zoomWin->show();
                 }
             }

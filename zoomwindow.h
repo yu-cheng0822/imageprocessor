@@ -56,6 +56,9 @@ private:
     QColor penColor;           // 畫筆顏色
     int penWidth;              // 畫筆粗細
     
+    // 常數定義
+    static constexpr int TOOLBAR_HEIGHT = 60;  // 工具列高度
+    
     // 初始化UI
     void setupUI();
 };
