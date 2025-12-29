@@ -18,7 +18,7 @@ ZoomWindow::ZoomWindow(const QImage &sourceImage, const QRect &selectedRegion, d
     QImage croppedImage = sourceImage.copy(selectedRegion);
     
     // 根據放大倍率縮放影像
-    int newWidth = static_cast<int>(croppedImage.width() * zoomFactor);
+    int newWidth = static_cast<int>(croppedImage.widath() * zoomFactor);
     int newHeight = static_cast<int>(croppedImage.height() * zoomFactor);
     zoomedImage = croppedImage.scaled(newWidth, newHeight, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     
