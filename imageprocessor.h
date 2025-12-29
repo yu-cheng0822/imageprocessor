@@ -7,6 +7,8 @@
 #include <QAction>
 #include <QMenu>
 #include <QToolBar>
+#include <QMouseEvent>
+#include <QStatusBar>
 #include "imagetransform.h"
 
 class imageprocessor : public QMainWindow
@@ -23,6 +25,11 @@ private slots:
     void small1();        // 對應 SLOT(small1())
     void showGeometryTransform();
 
+
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
     void createActions();
     void createMenus();
@@ -44,6 +51,8 @@ private:
     QAction *bigFileAction;
     QAction *sAction;
     QAction *geometryAction;
+    QLabel *statusLabel;
+    QLabel *MousePosLabel;
 };
 
 #endif // IMAGEPROCESSOR_H
