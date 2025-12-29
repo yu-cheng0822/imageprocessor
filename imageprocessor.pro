@@ -12,12 +12,14 @@ SOURCES += \
     imagetransform.cpp \
     main.cpp \
     imageprocessor.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    zoomwindow.cpp
 
 HEADERS += \
     imageprocessor.h \
     imagetransform.h \
-    mainwindow.h
+    mainwindow.h \
+    zoomwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

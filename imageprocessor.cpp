@@ -3,11 +3,15 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QDebug>
+#include <QInputDialog>
 #include "imagetransform.h"
 #include "qstatusbar.h"
 
 imageprocessor::imageprocessor(QWidget *parent)
     : QMainWindow(parent)
+    , rubberBand(nullptr)
+    , isSelecting(false)
+    , currentZoomFactor(2.0)  // 預設放大倍率為2倍
 {
     statusLabel = new QLabel(this);
     statusLabel->setText(QStringLiteral("指標位置"));
@@ -45,7 +49,9 @@ imageprocessor::imageprocessor(QWidget *parent)
 
 imageprocessor::~imageprocessor()
 {
-
+    // 清理橡皮筋選取框
+    if (rubberBand)
+        delete rubberBand;
 }
 
 void imageprocessor::createActions()
@@ -165,14 +171,45 @@ void imageprocessor::mouseMoveEvent (QMouseEvent *event)
         str += " = " + QString::number(grayValue);
     }
     MousePosLabel->setText(str);
+    
+    // 更新橡皮筋選取框
+    if (isSelecting && rubberBand)
+    {
+        rubberBand->setGeometry(QRect(selectionOrigin, event->pos()).normalized());
+    }
 }
 void imageprocessor::mousePressEvent (QMouseEvent *event)
 {
     QString str = "("+ QString::number (event->x()) + "," +
                   QString::number (event->y()) +")";
+    
+    // 左鍵：開始區域選取（用於放大功能）
     if (event->button() == Qt::LeftButton)
     {
         statusBar()->showMessage (QStringLiteral("左鍵:")+str);
+        
+        // 如果有載入影像，啟動選取模式
+        if (!img.isNull())
+        {
+            // 獲取imgWin在主視窗中的位置
+            QPoint globalPos = imgWin->mapToGlobal(QPoint(0, 0));
+            QPoint localPos = mapFromGlobal(globalPos);
+            
+            // 檢查點擊是否在imgWin範圍內
+            QRect imgRect(localPos, imgWin->size());
+            if (imgRect.contains(event->pos()))
+            {
+                isSelecting = true;
+                selectionOrigin = event->pos();
+                
+                // 建立橡皮筋選取框
+                if (!rubberBand)
+                    rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+                
+                rubberBand->setGeometry(QRect(selectionOrigin, QSize()));
+                rubberBand->show();
+            }
+        }
     }
     else if (event->button()== Qt::RightButton)
     {
@@ -189,4 +226,68 @@ void imageprocessor::mouseReleaseEvent (QMouseEvent *event)
     QString str = "(" + QString::number (event->x()) + "," +
                   QString::number (event->y()) +")";
     statusBar ()->showMessage (QStringLiteral("釋放:")+str);
+    
+    // 完成區域選取並開啟放大視窗
+    if (isSelecting && event->button() == Qt::LeftButton)
+    {
+        isSelecting = false;
+        
+        if (rubberBand && rubberBand->isVisible())
+        {
+            // 獲取選取區域
+            QRect selectionRect = rubberBand->geometry();
+            rubberBand->hide();
+            
+            // 獲取imgWin在主視窗中的位置
+            QPoint globalPos = imgWin->mapToGlobal(QPoint(0, 0));
+            QPoint localPos = mapFromGlobal(globalPos);
+            
+            // 將選取區域轉換為相對於imgWin的座標
+            QRect imgRect(localPos, imgWin->size());
+            selectionRect.translate(-localPos);
+            
+            // 確保選取區域在影像範圍內
+            selectionRect = selectionRect.intersected(QRect(0, 0, imgWin->width(), imgWin->height()));
+            
+            // 如果選取區域有效（大於10x10像素）
+            if (selectionRect.width() > 10 && selectionRect.height() > 10)
+            {
+                // 詢問使用者放大倍率
+                bool ok;
+                double zoomFactor = QInputDialog::getDouble(
+                    this,
+                    QStringLiteral("設定放大倍率"),
+                    QStringLiteral("請輸入放大倍率 (1.0 - 10.0):"),
+                    currentZoomFactor,  // 預設值
+                    1.0,                // 最小值
+                    10.0,               // 最大值
+                    1,                  // 小數位數
+                    &ok);
+                
+                if (ok)
+                {
+                    currentZoomFactor = zoomFactor;
+                    
+                    // 將選取區域從顯示座標轉換為實際影像座標
+                    // 因為imgWin使用setScaledContents，需要根據縮放比例調整
+                    double scaleX = static_cast<double>(img.width()) / imgWin->width();
+                    double scaleY = static_cast<double>(img.height()) / imgWin->height();
+                    
+                    QRect imageRect(
+                        static_cast<int>(selectionRect.x() * scaleX),
+                        static_cast<int>(selectionRect.y() * scaleY),
+                        static_cast<int>(selectionRect.width() * scaleX),
+                        static_cast<int>(selectionRect.height() * scaleY)
+                    );
+                    
+                    // 確保imageRect在影像範圍內
+                    imageRect = imageRect.intersected(QRect(0, 0, img.width(), img.height()));
+                    
+                    // 建立並顯示放大視窗
+                    ZoomWindow *zoomWin = new ZoomWindow(img, imageRect, zoomFactor);
+                    zoomWin->show();
+                }
+            }
+        }
+    }
 }

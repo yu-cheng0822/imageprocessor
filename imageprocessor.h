@@ -9,7 +9,10 @@
 #include <QToolBar>
 #include <QMouseEvent>
 #include <QStatusBar>
+#include <QRubberBand>
+#include <QInputDialog>
 #include "imagetransform.h"
+#include "zoomwindow.h"
 
 class imageprocessor : public QMainWindow
 {
@@ -53,6 +56,12 @@ private:
     QAction *geometryAction;
     QLabel *statusLabel;
     QLabel *MousePosLabel;
+    
+    // 區域選取相關變數
+    QRubberBand *rubberBand;    // 橡皮筋選取框
+    QPoint selectionOrigin;     // 選取起始點
+    bool isSelecting;           // 是否正在選取
+    double currentZoomFactor;   // 當前放大倍率
 };
 
 #endif // IMAGEPROCESSOR_H
