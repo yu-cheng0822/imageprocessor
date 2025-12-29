@@ -23,7 +23,7 @@ void ZoomLabel::mousePressEvent(QMouseEvent *event) // 監聽滑鼠按下
 {
     if (event->button() != Qt::LeftButton || !sourceImg) // 只有有影像且左鍵才開始
         return; // 沒符合條件就離開
-    origin = event->pos(); // 紀錄框選起點
+    origin = event->pos(); // 記錄框選起點
     rubberBand->setGeometry(QRect(origin, QSize())); // 初始化橡皮筋大小
     rubberBand->show(); // 顯示橡皮筋
 }
@@ -76,7 +76,7 @@ void PaintLabel::mousePressEvent(QMouseEvent *event) // 監聽滑鼠按下開始
     if (event->button() != Qt::LeftButton || workingImage.isNull()) // 必須有影像且用左鍵
         return; // 不符合條件就離開
     painting = true; // 開啟畫筆
-    lastPoint = event->pos(); // 紀錄起始點
+    lastPoint = event->pos(); // 記錄起始點
 }
 
 void PaintLabel::mouseMoveEvent(QMouseEvent *event) // 監聽滑鼠拖曳繪圖

@@ -49,7 +49,7 @@ protected:
 private:
     QImage workingImage; // 儲存可被塗改的影像
     QPoint lastPoint; // 記錄上一個繪圖點
-    bool painting; // 紀錄畫筆是否啟動
+    bool painting; // 記錄畫筆是否啟動
 };
 
 class ZoomWindow : public QWidget // 放大結果與塗改的新視窗
