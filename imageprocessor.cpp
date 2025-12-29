@@ -3,6 +3,7 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QDebug>
+#include "imagetransform.h"
 
 imageprocessor::imageprocessor(QWidget *parent)
     : QMainWindow(parent)
@@ -13,6 +14,7 @@ imageprocessor::imageprocessor(QWidget *parent)
     imgWin = new QLabel();
     QPixmap *initPixmap = new QPixmap(300,200);
     initPixmap->fill (QColor(255,255,255));
+    gWin =new imagetransform();
     imgWin->resize (300,200);
     imgWin->setScaledContents (true);
     imgWin->setPixmap (*initPixmap);
@@ -41,6 +43,12 @@ void imageprocessor::createActions()
     exitAction->setStatusTip (QStringLiteral("退出程式"));
     connect (exitAction, SIGNAL (triggered()), this, SLOT (close()));
 
+    geometryAction = new QAction(QStringLiteral("幾何轉換"),this);
+    geometryAction->setShortcut (tr("Ctrl+G"));
+    geometryAction->setStatusTip (QStringLiteral("影像幾何轉換"));
+    connect (geometryAction, SIGNAL (triggered()), this, SLOT (showGeometryTransform()));
+    connect (exitAction, SIGNAL (triggered()),gWin, SLOT (close()));
+
     bigFileAction = new QAction (QStringLiteral("放大&+"),this);
     bigFileAction->setShortcut (tr("Ctrl+"));
     bigFileAction->setStatusTip (QStringLiteral("放大"));
@@ -58,6 +66,7 @@ void imageprocessor::createMenus()
     fileMenu->addAction (exitAction);
     fileMenu = menuBar ()->addMenu (QStringLiteral ("工具&T"));
     fileMenu->addAction(bigFileAction);
+    fileMenu->addAction(geometryAction);
     fileMenu->addAction (sAction);
 }
 void imageprocessor::createToolBars ()
@@ -67,6 +76,7 @@ void imageprocessor::createToolBars ()
     fileTool = addToolBar("file");
     fileTool->addAction (bigFileAction);
     fileTool->addAction (sAction);
+    fileTool->addAction(geometryAction);
 }
 void imageprocessor::loadFile (QString filename)
 {
@@ -117,4 +127,12 @@ void imageprocessor::small1()
     ret->setPixmap(QPixmap::fromImage(small1));
     ret->setWindowTitle(tr("縮小結果"));
     ret->show();
+}
+void imageprocessor::
+    showGeometryTransform()
+{
+    if (!img.isNull())
+        gWin->srcImg = img;
+    gWin->inWin->setPixmap (QPixmap:: fromImage (gWin->srcImg));
+    gWin->show();
 }

@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QToolBar>
+#include "imagetransform.h"
 
 class imageprocessor : public QMainWindow
 {
@@ -20,6 +21,7 @@ private slots:
     void showopenfile();  // 對應 SLOT(showopenfile())
     void big1();          // 對應 SLOT(big1())
     void small1();        // 對應 SLOT(small1())
+    void showGeometryTransform();
 
 private:
     void createActions();
@@ -27,6 +29,7 @@ private:
     void createToolBars();
     void loadFile(QString filename);
 
+    imagetransform *gWin;
     QWidget *central;
     QLabel *imgWin;
     QImage img;
@@ -40,6 +43,7 @@ private:
     QAction *exitAction;
     QAction *bigFileAction;
     QAction *sAction;
+    QAction *geometryAction;
 };
 
 #endif // IMAGEPROCESSOR_H
