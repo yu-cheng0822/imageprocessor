@@ -110,7 +110,7 @@ ZoomWindow::ZoomWindow(QWidget *parent) // 建構子
     layout->addWidget(paintArea); // 把顯示區放到版面上
     layout->addWidget(saveButton); // 把存檔按鈕放到版面上
     setLayout(layout); // 套用版面配置
-    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveImage())); // 連結按鈕觸發存檔
+    connect(saveButton, &QPushButton::clicked, this, &ZoomWindow::saveImage); // 連結按鈕觸發存檔
 }
 
 void ZoomWindow::setZoomedImage(const QImage &image) // 放入放大後影像
@@ -166,7 +166,7 @@ imageprocessor::imageprocessor(QWidget *parent)
     createActions(); // 建立動作
     createMenus(); // 建立選單
     createToolBars(); // 建立工具列
-    connect(imgWin, SIGNAL(selectionReady(QRect)), this, SLOT(showZoomedSelection(QRect))); // 接收框選完成訊號
+    connect(imgWin, &ZoomLabel::selectionReady, this, &imageprocessor::showZoomedSelection); // 接收框選完成訊號
 }
 
 
@@ -298,8 +298,8 @@ void imageprocessor::showZoomedSelection(const QRect &rect) // 顯示框選放�
     if (bounded.width() <= 0 || bounded.height() <= 0) // 若沒有有效範圍
         return; // 不進行放大
     QImage cropped = img.copy(bounded); // 依框選擷取子圖
-    QImage zoomed = cropped.scaled(cropped.width() * factor, cropped.height() * factor); // 依倍率放大
-    ZoomWindow *window = new ZoomWindow(); // 建立新視窗顯示放大結果
+    QImage zoomed = cropped.scaled(cropped.width() * factor, cropped.height() * factor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation); // 依倍率放大並使用平滑插值
+    ZoomWindow *window = new ZoomWindow(this); // 建立新視窗顯示放大結果並指定父物件
     window->setAttribute(Qt::WA_DeleteOnClose); // 關閉時自動釋放
     window->setZoomedImage(zoomed); // 將放大影像放入新視窗
     window->setWindowTitle(tr("放大視窗")); // 設定新視窗標題
