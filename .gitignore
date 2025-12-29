@@ -1,0 +1,30 @@
+# Qt generated files
+Makefile
+.qmake.stash
+moc_*.cpp
+moc_*.h
+moc_predefs.h
+
+# Object files
+*.o
+*.obj
+
+# Executables
+imageprocessor
+*.exe
+*.app
+
+# Build directories
+build/
+build-*/
+
+# Qt Creator user files
+*.pro.user
+*.pro.user.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
